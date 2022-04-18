@@ -25,7 +25,7 @@ def buildfrequencylist(dataIN):
     result = []
     present = False
 
-    tempResult.append(dataIN[1])
+    tempResult.append(dataIN[0])
     tempResult.append(1)
 
     for i in range(1, len(dataIN)):
@@ -44,6 +44,7 @@ def buildfrequencylist(dataIN):
         result.append((tempResult[k], tempResult[k - 1]))
 
     return result
+
 
 def buildHuffmantree(inputList):
     """
