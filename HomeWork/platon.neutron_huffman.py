@@ -21,9 +21,29 @@ def buildfrequencylist(dataIN):
     """
     Builds a tuple list of the character frequencies in the input.
     """
-    # FIXME
-    pass
+    tempResult = []
+    result = []
+    present = False
 
+    tempResult.append(dataIN[1])
+    tempResult.append(1)
+
+    for i in range(1, len(dataIN)):
+        for j in range(0, len(tempResult), 2):
+            if (dataIN[i] == tempResult[j]):
+                tempResult[j + 1] += 1
+                present = True
+
+        if (present == False):
+            tempResult.append(dataIN[i])
+            tempResult.append(1)
+
+        present = False
+
+    for k in range(1, len(tempResult), 2):
+        result.append((tempResult[k], tempResult[k - 1]))
+
+    return result
 
 def buildHuffmantree(inputList):
     """
