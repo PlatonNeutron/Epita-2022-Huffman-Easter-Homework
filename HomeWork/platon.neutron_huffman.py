@@ -19,7 +19,7 @@ from algopy import heap
 
 def buildfrequencylist(dataIN):
     """
-    Builds a tuple list of the character frequencies in the input.
+        Builds a tuple list of the character frequencies in the input.
     """
     tempResult = []
     result = []
@@ -46,17 +46,65 @@ def buildfrequencylist(dataIN):
     return result
 
 
+def __petitTri(tupleList):
+    """
+        Sort the list take in parameter.
+    """
+    for i in range(len(tupleList)):
+        x = tupleList[i]
+        j = i
+
+        while (j > 0 and (tupleList[j - 1][0] < x[0])):
+            tupleList[j] = tupleList[j - 1]
+            j -= 1
+
+        tupleList[j] = x
+
+def __binTreeList(tupleList):
+    """
+        Transform char in the tuples in BinTree.
+    """
+    result = []
+
+    for i in range(len(tupleList)):
+        result.append((tupleList[i][0], bintree.BinTree(tupleList[i][1], None, None)))
+
+    return result
+
 def buildHuffmantree(inputList):
     """
-    Processes the frequency list into a Huffman tree according to the algorithm.
+        Processes the frequency list into a Huffman tree according to the algorithm.
     """
-    # FIXME
-    pass
+    __petitTri(inputList)
+    binTreeList = __binTreeList(inputList)
+
+    while (len(binTreeList) != 1):
+        plusPetit1 = binTreeList.pop()
+        plusPetit2 = binTreeList.pop()
+        freq = plusPetit1[0] + plusPetit2[0]
+
+        maximum = max((plusPetit1[0], 1), (plusPetit2[0], 2))
+
+        if (maximum[1] == 1):
+            maximum = plusPetit1[1]
+            minimum = plusPetit2[1]
+
+        else:
+            maximum = plusPetit2[1]
+            minimum = plusPetit1[1]
+
+        binTreeList.append((freq, bintree.BinTree(None, maximum, minimum)))
+        i = len(binTreeList) - 1
+        while (len(binTreeList) != 1 and i != 0 and binTreeList[i][0] > binTreeList[i - 1][0]):
+            binTreeList[i], binTreeList[i - 1] = binTreeList[i - 1], binTreeList[i]
+            i -= 1
+
+    return binTreeList[0][1]
 
 
 def encodedata(huffmanTree, dataIN):
     """
-    Encodes the input string to its binary string representation.
+        Encodes the input string to its binary string representation.
     """
     # FIXME
     pass
