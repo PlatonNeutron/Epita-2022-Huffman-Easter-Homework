@@ -175,8 +175,24 @@ def decodedata(huffmanTree, dataIN):
     """
     Decode a string using the corresponding huffman tree into something more readable.
     """
-    # FIXME
-    pass
+    # Build the Huffman correspondent table
+    correspondenceTable = []
+    code = ""
+    __BuilsCorrespondenceTable(huffmanTree, correspondenceTable, code)
+
+    # Decode the string "dataIN"
+    result = ""
+    code = ""
+
+    for i in dataIN:
+        code += i
+
+        for correspondence in correspondenceTable:
+            if (code == correspondence[1]):
+                result += correspondence[0]
+                code = ""
+
+    return result
 
     
 def decodetree(dataIN):
