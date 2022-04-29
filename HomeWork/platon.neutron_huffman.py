@@ -102,12 +102,43 @@ def buildHuffmantree(inputList):
     return binTreeList[0][1]
 
 
+def __BuilsCorrespondenceTable(huffmanTree, result, code):
+    """
+        Function which build the correspondence table of a Huffman tree
+        :param huffmanTree: a BinTree
+        :param result: a list
+        :param code: a string
+        :return: a list a tuple (huffmanTree.key, string)
+    """
+    if (huffmanTree.left != None):
+        left = code + "0"
+        __BuilsCorrespondenceTable(huffmanTree.left, result, left)
+
+    if (huffmanTree.right != None):
+        right = code + "1"
+        __BuilsCorrespondenceTable(huffmanTree.right, result, right)
+
+    else:
+        result.append((huffmanTree.key, code))
+
 def encodedata(huffmanTree, dataIN):
     """
-        Encodes the input string to its binary string representation.
+    Encodes the input string to its binary string representation.
     """
-    # FIXME
-    pass
+    # Build the Huffman correspondent table
+    correspondenceTable = []
+    code = ""
+    __BuilsCorrespondenceTable(huffmanTree, correspondenceTable, code)
+
+    # Encode the string "dataIN"
+    result = ""
+
+    for letter in dataIN:
+        for correspondence in correspondenceTable:
+            if (letter == correspondence[0]):
+                result += correspondence[1]
+
+    return result
 
 
 def encodetree(huffmanTree):
