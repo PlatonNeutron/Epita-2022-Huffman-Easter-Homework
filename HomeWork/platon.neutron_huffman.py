@@ -232,15 +232,121 @@ def decodedata(huffmanTree, dataIN):
 
     return result
 
-    
+
+def __SliceData(dataIN):
+    """
+        Function which slice a string in substrings
+        :param dataIN: a string
+        :return: a list which contains the substrings
+    """
+    result = []
+    i = 0
+
+    while (i != len(dataIN)):
+        if (dataIN[i] == "0"):
+            result.append("0")
+            i += 1
+
+        elif (dataIN[i] == "1"):
+            tempValue = ""
+            start = False
+
+            for j in range(1, 9):
+                if ((i + j) != len(dataIN) and dataIN[i + j] == "1" and start == False):
+                    tempValue += dataIN[i + j]
+                    start = True
+
+                elif (start == True):
+                    tempValue += dataIN[i + j]
+
+            result.append(tempValue)
+            i += 9
+
+    return result
+
+def __ToInt(value):
+    """
+        Function which convert binary value in int value
+        :param value: a binary value
+        :return: the int value of value
+    """
+    exp = len(value) - 1
+    result = 0
+
+    for i in range(len(value)):
+        if (value[i] == "1"):
+            result += 2**exp
+            exp -= 1
+
+        else:
+            exp -= 1
+
+    return result
+
+def __DecodeValue(sliceData):
+    """
+        Function which convert int value in char
+        :param sliceData: an int value
+        :return: the corresponding char
+    """
+    for i in range(len(sliceData)):
+        if (len(sliceData[i]) > 1):
+            sliceData[i] = chr(__ToInt(sliceData[i]))
+
+def __ConvertToBinTree(list):
+    """
+        Function which convert the element in the list in BinTree
+        :param list: a list of strings
+        :return: the same list but all strings are BinTree
+    """
+    for i in range(len(list)):
+        if (list[i] == "0"):
+            list[i] = (bintree.BinTree(None, None, None), "noeud")
+
+        else:
+            list[i] = (bintree.BinTree(list[i], None, None), "element")
+
+def __PartialBuildTree(list):
+    """
+        Function which build all possible nodes with this statement of the list
+        :param list: alist of BinTree
+        :return: a list but some BinTree are child of other BinTree
+    """
+    result = []
+    borne = 0
+
+    for i in range(len(list)):
+        if (list[i][1] == "noeud"):
+            if ((i + 1) < len(list) and list[i + 1][1] != "noeud"):
+                if ((i + 2) < len(list) and list[i + 2][1] != "noeud"):
+                    result.append((bintree.BinTree(None, list[i + 1][0], list[i + 2][0]), "element"))
+                    borne = i + 2
+
+                else:
+                    result.append(list[i])
+            else:
+                result.append(list[i])
+
+        elif (i > borne):
+            result.append(list[i])
+            borne = 0
+
+    return result
+
 def decodetree(dataIN):
     """
     Decodes a huffman tree from its binary representation:
         * a '0' means we add a new internal node and go to its left node
-        * a '1' means the next 8 values are the encoded character of the current leaf         
+        * a '1' means the next 8 values are the encoded character of the current leaf
     """
-    # FIXME
-    pass
+    result = __SliceData(dataIN)
+    __DecodeValue(result)
+    __ConvertToBinTree(result)
+
+    while (len(result) != 1):
+        result = __PartialBuildTree(result)
+
+    return result[0][0]
 
 
 def frombinary(dataIN, align):
