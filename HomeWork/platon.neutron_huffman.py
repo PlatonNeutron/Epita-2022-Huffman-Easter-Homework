@@ -141,14 +141,52 @@ def encodedata(huffmanTree, dataIN):
     return result
 
 
+def __ToBinary(intValue):
+    """
+        Function which convert int value in binary value
+        :param intValue: an int value
+        :return: the binary value of intValue
+    """
+    tempResult = []
+    result = ""
+
+    while (intValue != 0):
+        b = intValue // 2
+        tempResult.append(str(intValue % 2))
+        intValue = b
+
+    if (len(tempResult) < 8):
+        result += "0"
+
+    while (tempResult != []):
+        result += tempResult.pop()
+
+    return result
+
+def __EncodeTreeAux(huffmanTree, result):
+    if (huffmanTree.left != None and huffmanTree.right != None):
+        result.append("0")
+        __EncodeTreeAux(huffmanTree.left, result)
+        __EncodeTreeAux(huffmanTree.right, result)
+
+    else:
+        result.append("1")
+        result.append(__ToBinary(ord(huffmanTree.key)))
+
 def encodetree(huffmanTree):
     """
     Encodes a huffman tree to its binary representation using a preOrder traversal:
         * each leaf key is encoded into its binary representation on 8 bits preceded by '1'
         * each time we go left we add a '0' to the result
     """
-    # FIXME
-    pass
+    code = []
+    result = ""
+    __EncodeTreeAux(huffmanTree, code)
+
+    for i in code:
+        result += i
+
+    return result
 
 
 def tobinary(dataIN):
