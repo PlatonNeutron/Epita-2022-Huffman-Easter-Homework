@@ -193,8 +193,35 @@ def tobinary(dataIN):
     """
     Compresses a string containing binary code to its real binary value.
     """
-    # FIXME
-    pass
+    comp = 0
+    intValue = 0
+    resultStr = ""
+    resultInt = 0
+
+    for i in range(len(dataIN) + 1):
+        if (comp > 7):
+            resultStr += chr(intValue)
+            comp = 0
+            intValue = 0
+
+        if (i != len(dataIN)):
+            if (comp == 0 and (i + 8) >= len(dataIN)):
+                value = len(dataIN) - (i + 8)
+
+                if (value < 0):
+                    comp += -value
+                    resultInt = -value
+
+                elif (value == len(dataIN)):
+                    comp += 1
+                    resultInt = 1
+
+            if (dataIN[i] == "1"):
+                intValue += 2 ** (7 - comp)
+
+            comp += 1
+
+    return (resultStr, resultInt)
 
 
 def compress(dataIn):
