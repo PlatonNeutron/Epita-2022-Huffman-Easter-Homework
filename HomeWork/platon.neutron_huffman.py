@@ -380,8 +380,28 @@ def frombinary(dataIN, align):
     """
     Retrieve a string containing binary code from its real binary value (inverse of :func:`toBinary`).
     """
-    # FIXME
-    pass
+    result = ""
+
+    for i in range(len(dataIN)):
+        binaryCode = __ToBinary(ord(dataIN[i]))
+
+        if (len(binaryCode) != 8):
+            manquant = 8 - len(binaryCode)
+            binaryCode = manquant * "0" + binaryCode
+
+        if (i == len(dataIN) - 1):
+            tempCode = ""
+
+            for j in range(len(binaryCode)):
+                if (j >= align):
+                    tempCode += binaryCode[j]
+
+            binaryCode = ""
+            result += tempCode
+
+        result += binaryCode
+
+    return result
 
 
 def decompress(data, dataAlign, tree, treeAlign):
