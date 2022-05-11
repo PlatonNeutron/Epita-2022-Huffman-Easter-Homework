@@ -228,9 +228,13 @@ def compress(dataIn):
     """
     The main function that makes the whole compression process.
     """
-    
-    # FIXME
-    pass
+    frequencyTable = buildfrequencylist(dataIn)
+    huffmanTree = buildHuffmantree(frequencyTable)
+    encodedData = encodedata(huffmanTree, dataIn)
+    huffmanTreeEncoded = encodetree(huffmanTree)
+    ((a, b), (c, d)) = (tobinary(encodedData), tobinary(huffmanTreeEncoded))
+
+    return ((a, b), (c, d))
 
     
 ################################################################################
