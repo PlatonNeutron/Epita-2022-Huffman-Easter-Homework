@@ -123,7 +123,7 @@ def __BuilsCorrespondenceTable(huffmanTree, result, code):
 
 def encodedata(huffmanTree, dataIN):
     """
-    Encodes the input string to its binary string representation.
+        Encodes the input string to its binary string representation.
     """
     # Build the Huffman correspondent table
     correspondenceTable = []
@@ -155,8 +155,10 @@ def __ToBinary(intValue):
         tempResult.append(str(intValue % 2))
         intValue = b
 
-    if (len(tempResult) < 8):
+    fakeLen = len(tempResult)
+    while (fakeLen < 8):
         result += "0"
+        fakeLen += 1
 
     while (tempResult != []):
         result += tempResult.pop()
@@ -164,6 +166,12 @@ def __ToBinary(intValue):
     return result
 
 def __EncodeTreeAux(huffmanTree, result):
+    """
+        Function which create recursively the right coding of huffmanTree
+        :param huffmanTree: a BinTree
+        :param result: a list
+        :return: a list where "0" element are nodes, "1" element are leaves, "others" are the binary coding of the corresponding int value of the char
+    """
     if (huffmanTree.left != None and huffmanTree.right != None):
         result.append("0")
         __EncodeTreeAux(huffmanTree.left, result)
@@ -175,9 +183,9 @@ def __EncodeTreeAux(huffmanTree, result):
 
 def encodetree(huffmanTree):
     """
-    Encodes a huffman tree to its binary representation using a preOrder traversal:
-        * each leaf key is encoded into its binary representation on 8 bits preceded by '1'
-        * each time we go left we add a '0' to the result
+        Encodes a huffman tree to its binary representation using a preOrder traversal:
+            * each leaf key is encoded into its binary representation on 8 bits preceded by '1'
+            * each time we go left we add a '0' to the result
     """
     code = []
     result = ""
@@ -191,7 +199,7 @@ def encodetree(huffmanTree):
 
 def tobinary(dataIN):
     """
-    Compresses a string containing binary code to its real binary value.
+        Compresses a string containing binary code to its real binary value.
     """
     comp = 0
     intValue = 0
@@ -217,7 +225,7 @@ def tobinary(dataIN):
                     resultInt = 1
 
             if (dataIN[i] == "1"):
-                intValue += 2 ** (7 - comp)
+                intValue += 2**(7 - comp)
 
             comp += 1
 
@@ -226,7 +234,7 @@ def tobinary(dataIN):
 
 def compress(dataIn):
     """
-    The main function that makes the whole compression process.
+        The main function that makes the whole compression process.
     """
     frequencyTable = buildfrequencylist(dataIn)
     huffmanTree = buildHuffmantree(frequencyTable)
@@ -242,7 +250,7 @@ def compress(dataIn):
 
 def decodedata(huffmanTree, dataIN):
     """
-    Decode a string using the corresponding huffman tree into something more readable.
+        Decode a string using the corresponding huffman tree into something more readable.
     """
     # Build the Huffman correspondent table
     correspondenceTable = []
@@ -283,7 +291,7 @@ def __SliceData(dataIN):
             start = False
 
             for j in range(1, 9):
-                if ((i + j) != len(dataIN) and dataIN[i + j] == "1" and start == False):
+                if ((i + j) != len(dataIN) and start == False):  # and dataIN[i + j] == "1"
                     tempValue += dataIN[i + j]
                     start = True
 
@@ -350,7 +358,9 @@ def __PartialBuildTree(list):
         if (list[i][1] == "noeud"):
             if ((i + 1) < len(list) and list[i + 1][1] != "noeud"):
                 if ((i + 2) < len(list) and list[i + 2][1] != "noeud"):
-                    result.append((bintree.BinTree(None, list[i + 1][0], list[i + 2][0]), "element"))
+                    list[i][0].left = list[i + 1][0]
+                    list[i][0].right = list[i + 2][0]
+                    result.append((list[i][0], "element"))
                     borne = i + 2
 
                 else:
@@ -360,15 +370,15 @@ def __PartialBuildTree(list):
 
         elif (i > borne):
             result.append(list[i])
-            borne = 0
+            borne = i
 
     return result
 
 def decodetree(dataIN):
     """
-    Decodes a huffman tree from its binary representation:
-        * a '0' means we add a new internal node and go to its left node
-        * a '1' means the next 8 values are the encoded character of the current leaf
+        Decodes a huffman tree from its binary representation:
+            * a '0' means we add a new internal node and go to its left node
+            * a '1' means the next 8 values are the encoded character of the current leaf
     """
     result = __SliceData(dataIN)
     __DecodeValue(result)
@@ -382,7 +392,7 @@ def decodetree(dataIN):
 
 def frombinary(dataIN, align):
     """
-    Retrieve a string containing binary code from its real binary value (inverse of :func:`toBinary`).
+        Retrieve a string containing binary code from its real binary value (inverse of :func:`toBinary`).
     """
     result = ""
 
@@ -410,7 +420,11 @@ def frombinary(dataIN, align):
 
 def decompress(data, dataAlign, tree, treeAlign):
     """
-    The whole decompression process.
+        The whole decompression process.
     """
-    # FIXME
-    pass
+    decompressedData = frombinary(data, dataAlign)
+    decompressedTree = frombinary(tree, treeAlign)
+    decodedTree = decodetree(decompressedTree)
+    decodedData = decodedata(decodedTree, decompressedData)
+
+    return decodedData
